@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Dairy Branches{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-blue-600">Dairy Branches</h2>
+    {% if request.user.role == 'Admin' %}
+    <a href="{% url 'add_branch_dairy' %}" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 text-sm">
+        ➕ Add Branch
+    </a>
+    {% endif %}
+</div>
+
+<div class="overflow-x-auto">
+    <table class="min-w-full bg-gray-900 border border-gray-700 rounded-lg shadow-lg">
+        <thead class="bg-blue-700 text-white">
+            <tr>
+                <th class="py-2 px-4 text-left">Main Name</th>
+                <th class="py-2 px-4 text-left">Branch Name</th>
+                <th class="py-2 px-4 text-left">Manager</th>
+                <th class="py-2 px-4 text-left">Type</th>
+                <th class="py-2 px-4 text-left">Created</th>
+                {% if request.user.role == 'Admin' %}
+                    <th class="py-2 px-4 text-center">Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody class="text-gray-200">
+            {% for dairy in dairies %}
+            <tr class="border-b border-gray-700 hover:bg-gray-800">
+                <td class="py-2 px-4">{{ dairy.main_dairy.name }}</td>
+                <td class="py-2 px-4">{{ dairy.name }}</td>
+                <td class="py-2 px-4">
+                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">{{ dairy.user.username }}</span>
+                </td>
+                <td class="py-2 px-4">
+                    {% if dairy.role == 'Main' %}
+                        <span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Main</span>
+                    {% else %}
+                        <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs">Branch</span>
+                    {% endif %}
+                </td>
+                <td class="py-2 px-4">{{ dairy.created_at|date:"Y-m-d" }}</td>
+                {% if request.user.role == 'Admin' %}
+                <td class="py-2 px-4 text-center">
+                    <a href="{% url 'edit_branch_dairy' dairy.id %}" class="text-blue-400 hover:underline">Edit</a> |
+                    <a href="{% url 'delete_branch_dairy' dairy.id %}" class="text-red-400 hover:underline" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-4 text-gray-500">No branches found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}{% if edit %}Edit{% else %}Add{% endif %} Subscription Plan{% endblock %}
+{% block content %}
+<div class="flex justify-center items-center min-h-screen p-4">
+    <div class="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl">
+        
+        <h2 class="text-3xl font-extrabold text-center text-white mb-8 drop-shadow-lg">
+            {% if edit %}Edit{% else %}Add{% endif %} Subscription Plan
+        </h2>
+
+        <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% csrf_token %}
+            
+            <!-- Plan Name -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Plan Name</label>
+                <input type="text" name="name" value="{{ plan.name|default_if_none:'' }}"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white placeholder-gray-300
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm" required>
+            </div>
+
+            <!-- Plan Type -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Plan Type</label>
+                <select name="plan_type"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white placeholder-gray-300
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm" required>
+                    <option value="">-- Select Plan Type --</option>
+                    {% for key, value in plan_choices %}
+                        <option value="{{ key }}" {% if plan.plan_type == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- No of Sub Dairy -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">No of Sub Dairy</label>
+                <input type="number" name="number_of_sub_dairy" value="{{ plan.number_of_sub_dairy|default_if_none:'' }}"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white placeholder-gray-300
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm" required>
+            </div>
+
+            <!-- Price -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Price</label>
+                <input type="number" step="0.01" name="price" value="{{ plan.price|default_if_none:'' }}"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white placeholder-gray-300
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm" required>
+            </div>
+
+            <!-- Description (full width) -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-200 mb-1">Description</label>
+                <textarea name="description" rows="3"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white placeholder-gray-300
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">{{ plan.description|default_if_none:'' }}</textarea>
+            </div>
+
+            <!-- Buttons (full width) -->
+            <div class="flex justify-between gap-4 md:col-span-2 pt-4">
+                <button type="submit"
+                    class="flex-1 bg-blue-600 text-white font-semibold py-2 rounded-lg shadow-lg transform transition hover:bg-blue-700 hover:scale-105">
+                    {% if edit %}Update{% else %}Create{% endif %}
+                </button>
+                <a href="{% url 'subscription_plan_list' %}"
+                    class="flex-1 text-center bg-white/20 border border-white/30 text-white font-semibold py-2 rounded-lg shadow-md 
+                           transform transition hover:bg-white/30 hover:scale-105">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Subscription Plans{% endblock %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 p-6">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-extrabold text-white drop-shadow-lg">💎 Subscription Plans</h2>
+        {% if request.user.role == 'SuperAdmin' %}
+        <a href="{% url 'add_subscription_plan' %}" 
+           class="bg-blue-600 text-white px-4 py-2 rounded-xl shadow-md hover:bg-blue-700 transform transition hover:scale-105 text-sm">
+            ➕ Add Plan
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for plan in plans %}
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-6 flex flex-col hover:scale-105 transition transform">
+            
+            <h3 class="text-xl font-bold text-white mb-3 drop-shadow">{{ plan.name }}</h3>
+            
+            <div class="text-gray-200 space-y-2 text-sm">
+                <p><span class="font-semibold text-blue-400">🧩 Sub Dairy:</span> {{ plan.number_of_sub_dairy }}</p>
+                <p><span class="font-semibold text-green-400">💰 Price:</span> ₹{{ plan.price }}</p>
+                <p><span class="font-semibold text-purple-400">⏳ Duration:</span> {{ plan.plan_type }} months</p>
+                <p><span class="font-semibold text-pink-400">📝 Description:</span> {{ plan.description|default:"-" }}</p>
+            </div>
+
+            {% if request.user.role == 'SuperAdmin' %}
+            <div class="flex justify-between items-center mt-6">
+                <a href="{% url 'edit_subscription_plan' plan.id %}" 
+                   class="px-3 py-1 text-xs font-semibold bg-blue-500 text-white rounded-lg hover:bg-blue-600 shadow">
+                   ✏ Edit
+                </a>
+                <a href="{% url 'delete_subscription_plan' plan.id %}" 
+                   onclick="return confirm('Are you sure?')" 
+                   class="px-3 py-1 text-xs font-semibold bg-red-500 text-white rounded-lg hover:bg-red-600 shadow">
+                   🗑 Delete
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-400 col-span-full">No subscription plans found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

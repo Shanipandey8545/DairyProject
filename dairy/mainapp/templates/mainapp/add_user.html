@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}{{ edit|default:False|yesno:"Edit User,Add User" }}{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-screen p-4">
+    <div class="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl">
+        
+        <h2 class="text-3xl font-extrabold text-center text-white mb-8 drop-shadow-lg">
+            {{ edit|default:False|yesno:"Edit User,Add New User (Customer or Manager)" }}
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Username</label>
+                <input type="text" name="username" required
+                    value="{{ user_obj.username|default:'' }}"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Email</label>
+                <input type="email" name="email" required
+                    value="{{ user_obj.email|default:'' }}"
+                    {% if edit %}readonly{% endif %}
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm {% if edit %}cursor-not-allowed opacity-70{% endif %}">
+            </div>
+
+            <!-- Mobile -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Mobile</label>
+                <input type="text" name="mobile" required
+                    value="{{ user_obj.mobile|default:'' }}"
+                    {% if edit %}readonly{% endif %}
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm {% if edit %}cursor-not-allowed opacity-70{% endif %}">
+            </div>
+
+            <!-- Role -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Role</label>
+                <select name="role" required
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+                    <option class="text-black " value="">-- Select Role --</option>
+                    {% if request.user.role == 'Manager' %}
+                        <option value="Customer" selected>Customer</option>
+                    {% else %}
+                        <option class="text-black " value="Customer" {% if user_obj.role == 'Customer' %}selected{% endif %}>Customer</option>
+                        <option class="text-black " value="Manager" {% if user_obj.role == 'Manager' %}selected{% endif %}>Manager</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <!-- Address (full width) -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-200 mb-1">Address</label>
+                <textarea name="address" required rows="2"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">{{ user_obj.address|default:'' }}</textarea>
+            </div>
+
+            {% if not edit %}
+            <!-- Password -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Password</label>
+                <input type="password" name="password" required
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <label class="block text-sm font-medium text-gray-200 mb-1">Confirm Password</label>
+                <input type="password" name="password2" required
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           placeholder-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+            </div>
+            {% endif %}
+
+            <!-- Profile Image (full width) -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-200 mb-1">Profile Image</label>
+                <input type="file" name="profile_image"
+                    class="w-full px-4 py-2 rounded-lg border border-white/20 bg-white/20 text-white 
+                           focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-between gap-4 md:col-span-2 pt-4">
+                <button type="submit"
+                    class="flex-1 bg-blue-600 text-white font-semibold py-2 rounded-lg shadow-lg transform transition hover:bg-blue-700 hover:scale-105">
+                    {{ edit|default:False|yesno:"Update User,Create User" }}
+                </button>
+                <a href="{% url 'user_list' %}"
+                    class="flex-1 text-center bg-white/20 border border-white/30 text-white font-semibold py-2 rounded-lg shadow-md 
+                           transform transition hover:bg-white/30 hover:scale-105">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
