@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Milk Stock{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+    <h2 class="text-3xl font-bold text-gray-800">🥛 Milk Stock</h2>
+</div>
+
+<!-- Filter Section -->
+<div class="bg-white border shadow rounded-lg p-6 mb-8">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1 text-gray-600">Start Date</label>
+            <input type="date" name="start_date" value="{{ start_date }}" 
+                   class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring focus:ring-blue-200">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1 text-gray-600">End Date</label>
+            <input type="date" name="end_date" value="{{ end_date }}" 
+                   class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring focus:ring-blue-200">
+        </div>
+
+        {% if user.role == "Admin" %}
+        <div>
+            <label class="block text-sm font-medium mb-1 text-gray-600">Select Dairy</label>
+            <select name="dairy_id" 
+                    class="w-full border rounded-lg px-3 py-2 shadow-sm focus:ring focus:ring-blue-200">
+                <option value="">All Dairies</option>
+                {% for dairy in dairies %}
+                    <option value="{{ dairy.id }}" {% if dairy.id|stringformat:"s" == selected_dairy_id %}selected{% endif %}>
+                        {{ dairy.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="flex items-end">
+            <button type="submit" 
+                class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow">
+                Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Milk Summary -->
+{% if totals %}
+<div class="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-5 mb-8 shadow">
+    <h3 class="text-lg font-semibold mb-3 text-blue-800">📊 Milk Summary</h3>
+    <div class="grid md:grid-cols-3 gap-4 text-sm">
+        {% for item in totals %}
+        <div class="bg-white border rounded-lg shadow p-3">
+            <p class="font-bold text-gray-700">{{ item.milk_type }}</p>
+            <p class="text-blue-700">Total: {{ item.total|default:0 }} L</p>
+            <p class="text-green-700">Purchase: {{ item.total_purchase|default:0 }} L</p>
+            <p class="text-red-700">Sale: {{ item.total_sale|default:0 }} L</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Stock & Summary -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <!-- Table Section -->
+    <div class="lg:col-span-3">
+        <div class="bg-white border shadow rounded-lg overflow-hidden">
+            <h3 class="text-xl font-bold text-center bg-blue-600 text-white py-4">Current Milk Stock</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-blue-100 text-blue-800">
+                        <tr>
+                            <th class="p-3 text-left">Dairy</th>
+                            <th class="p-3 text-left">Type</th>
+                            <th class="p-3 text-left">Quantity (L)</th>
+                            <th class="p-3 text-left">Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in stocks %}
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="p-3">{{ stock.dairy.name }}</td>
+                            <td class="p-3">{{ stock.milk_type }}</td>
+                            <td class="p-3 font-semibold text-blue-700">{{ stock.quantity }}</td>
+                            <td class="p-3 text-gray-600">{{ stock.updated_at|date:"M j, Y, P" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-gray-500">No stock found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Summary -->
+    <div class="bg-white border shadow rounded-lg p-5">
+        <h4 class="text-lg font-semibold text-blue-700 mb-4 text-center">Branch-wise Stock</h4>
+        {% for branch, types in summary.items %}
+        <div class="mb-4 border-b pb-2">
+            <p class="font-semibold text-blue-600">{{ branch }}</p>
+            <ul class="ml-3 text-sm text-gray-700 space-y-1">
+                {% for milk_type, quantity in types.items %}
+                    <li class="flex justify-between">
+                        <span>{{ milk_type }}</span>
+                        <span class="font-semibold">{{ quantity }} L</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-500">No stock summary available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

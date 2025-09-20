@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Milk Collection{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">
+        {% if edit %}Edit{% else %}Add{% endif %} Milk Collection
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label class="block">Customer</label>
+            <select name="userprofile_id" required class="w-full border px-3 py-2 rounded">
+                <option value="">-- Select Customer --</option>
+                {% for profile in customers %}
+                    <option value="{{ profile.id }}"
+                        {% if edit and profile.id == collection.userprofile.id %}selected{% endif %}>
+                        {{ profile.user.username }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block">Milk Type</label>
+            <select name="milk_type" required class="w-full border px-3 py-2 rounded">
+                <option value="">-- Select Milk Type --</option>
+                {% for mt in milk_types %}
+                    <option value="{{ mt.name }}"
+                        {% if edit and mt.name == collection.milk_type %}selected{% endif %}>
+                        {{ mt.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block">Quantity (Litres)</label>
+            <input type="number" step="0.1" name="quantity" value="{% if edit %}{{ collection.quantity }}{% endif %}"
+                   required class="w-full border px-3 py-2 rounded">
+        </div>
+
+        <button type="submit" class="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800">
+            {% if edit %}Update{% else %}Collect Milk{% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

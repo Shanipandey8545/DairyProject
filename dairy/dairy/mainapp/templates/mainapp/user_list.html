@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}User List{% endblock %}
+
+{% block content %}
+
+<!-- Filter Form -->
+<form method="get" class="flex flex-wrap gap-4 mb-6">
+    {% if user.role == "Admin" %}
+        <div>
+            <label class="block text-sm font-medium text-gray-200 mb-1">Select Dairy</label>
+            <select name="dairy_id"
+                class="px-3 py-2 rounded-lg border border-white/20 bg-white/20 text-white w-60
+                       focus:ring-2 focus:ring-blue-400 focus:outline-none shadow-sm">
+                <option class="text-black" value="">All Dairies</option>
+                {% for dairy in dairies %}
+                    <option class="text-black" value="{{ dairy.id }}" {% if dairy.id|stringformat:"s" == selected_dairy_id %}selected{% endif %}>
+                        {{ dairy.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    <div class="flex items-end">
+        <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md
+                   transform transition hover:bg-blue-700 hover:scale-105">
+            Filter
+        </button>
+    </div>
+</form>
+
+<!-- User List Table -->
+<div class="w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-extrabold text-white drop-shadow">Users in Your Dairy</h2>
+        <a href="{% url 'add_user' %}"
+            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md
+                   transform transition hover:bg-blue-700 hover:scale-105">
+            ➕ Add User
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-blue-600 text-white">
+                <tr>
+                    <th class="px-4 py-2">Dairy</th>
+                    <th class="px-4 py-2">Username</th>
+                    <th class="px-4 py-2">Email</th>
+                    <th class="px-4 py-2">Mobile</th>
+                    <th class="px-4 py-2">Role</th>
+                    <th class="px-4 py-2 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10 text-gray-200">
+                {% for u in users %}
+                <tr class="hover:bg-white/10 transition">
+                    <td class="px-4 py-2">{{ u.dairy_profile.dairy.name }}</td>
+                    <td class="px-4 py-2">{{ u.username }}</td>
+                    <td class="px-4 py-2">{{ u.email }}</td>
+                    <td class="px-4 py-2">{{ u.mobile }}</td>
+                    <td class="px-4 py-2">
+                        {% if u.role == "Admin" %}
+                            <span class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">Admin</span>
+                        {% elif u.role == "Manager" %}
+                            <span class="px-3 py-1 bg-yellow-500 text-black rounded-lg text-sm">Manager</span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-green-600 text-white rounded-lg text-sm">Customer</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <a href="{% url 'edit_user' u.id %}" class="text-blue-400 hover:underline mr-3">Edit</a>
+                        <a href="{% url 'delete_user' u.id %}"
+                           class="text-red-400 hover:underline"
+                           onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-4 py-4 text-center text-gray-400">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

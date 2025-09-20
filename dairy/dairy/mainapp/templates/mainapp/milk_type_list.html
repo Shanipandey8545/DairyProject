@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Milk Types{% endblock %}
+{% block content %}
+
+
+
+<form method="get" class="flex flex-wrap gap-4 mb-6">
+    {% if user.role == "Admin" %}
+            <div>
+                <label class="block text-sm font-medium">Select Dairy</label>
+                <select name="dairy_id" class="border px-3 py-2 rounded w-60">
+                    <option value="">All Dairies</option>
+                    {% for dairy in dairies %}
+                        <option value="{{ dairy.id }}" {% if dairy.id|stringformat:"s" == selected_dairy_id %}selected{% endif %}>
+                            {{ dairy.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
+    <div class="flex items-end">
+        <button type="submit" class="bg-blue-700 text-white px-3 py-1 rounded hover:bg-blue-800">
+            Filter
+        </button>
+    </div>
+</form>
+
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold">Milk Types</h2>
+    <a href="{% url 'add_milk_type' %}" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">➕ Add Milk Type</a>
+</div>
+
+<table class="w-full border text-sm shadow-sm">
+    <thead class="bg-blue-700 text-white">
+        <tr>
+            <th class="p-2 text-left">Dairy</th>
+            <th class="p-2 text-left">Name</th>
+            <th class="p-2 text-left">Price/Litre</th>
+            <th class="p-2 text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for milk in milk_types %}
+        <tr class="border-b hover:bg-gray-50">
+            <td class="p-2">{{ milk.dairy.name }}</td>
+            <td class="p-2">{{ milk.name }}</td>
+            <td class="p-2">₹{{ milk.price_per_litre }}</td>
+            <td class="p-2 text-center">
+                <a href="{% url 'edit_milk_type' milk.pk %}" class="text-blue-600 hover:underline">Edit</a> |
+                <a href="{% url 'delete_milk_type' milk.pk %}" class="text-red-600 hover:underline"
+                   onclick="return confirm('Are you sure you want to delete this milk type?')">Delete</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="p-4 text-center">No milk types found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

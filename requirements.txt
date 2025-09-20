@@ -2,6 +2,7 @@ asgiref==3.9.1
 certifi==2025.8.3
 charset-normalizer==3.4.3
 Django==5.2.4
+djangorestframework==3.14.0
 gunicorn==23.0.0
 idna==3.10
 packaging==25.0
@@ -9,7 +10,10 @@ pillow==11.3.0
 python-dateutil==2.9.0.post0
 razorpay==1.4.2
 requests==2.32.4
+setuptools>=70.0
 six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.5.0
+waitress==3.0.2
+psycopg2-binary==2.9.9

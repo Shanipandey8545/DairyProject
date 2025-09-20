@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Payment History{% endblock %}
+{% block content %}
+
+<h2 class="text-3xl font-bold mb-6 text-gray-800">Payment History</h2>
+
+<!-- Filter Section -->
+<form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-8">
+    <div>
+        <label class="block text-sm font-medium mb-1">Start Date</label>
+        <input type="date" name="start_date" value="{{ start_date }}" class="w-40 border rounded px-3 py-2 shadow-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">End Date</label>
+        <input type="date" name="end_date" value="{{ end_date }}" class="w-40 border rounded px-3 py-2 shadow-sm">
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">Status</label>
+        <select name="status" class="w-36 border rounded px-3 py-2 shadow-sm">
+            <option value="">All</option>
+            <option value="Paid" {% if status == "Paid" %}selected{% endif %}>Paid</option>
+            <option value="Unpaid" {% if status == "Unpaid" %}selected{% endif %}>Unpaid</option>
+        </select>
+    </div>
+
+    <div class="flex items-end">
+        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            Filter
+        </button>
+    </div>
+</form>
+
+<!-- Payment History Table -->
+<div class="overflow-x-auto">
+    <table class="min-w-full border rounded-lg text-sm shadow-sm">
+        <thead class="bg-blue-700 text-white">
+            <tr>
+                <th class="py-3 px-4 text-left">Dairy</th>
+                <th class="py-3 px-4 text-left">Milk Type</th>
+                <th class="py-3 px-4 text-left">Customer</th>
+                <th class="py-3 px-4 text-left">Amount (₹)</th>
+                <th class="py-3 px-4 text-left">Payment Date</th>
+                <th class="py-3 px-4 text-left">Status</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            {% for payment in payment_history %}
+            <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4">{{ payment.collection.dairy.name }}</td>
+                <td class="py-3 px-4">{{ payment.collection.milk_type }} ({{ payment.collection.type }})</td>
+                <td class="py-3 px-4">{{ payment.collection.userprofile.user.username }}</td>
+                <td class="py-3 px-4">₹{{ payment.amount }}</td>
+                <td class="py-3 px-4">{{ payment.payment_date }}</td>
+                <td class="py-3 px-4">{{ payment.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-4 text-gray-500">No payments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

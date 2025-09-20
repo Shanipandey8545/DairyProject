@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Update Profile{% endblock %}
+{% block content %}
+
+<div class="flex justify-center items-center min-h-screen">
+  <div class="w-full max-w-2xl bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl">
+    
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Update Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+
+      <!-- Row 1 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Name</label>
+          <input type="text" name="name" value="{{ user.first_name }}"
+            class="w-full px-4 py-2 border rounded bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input type="email" value="{{ user.email }}" readonly
+            class="w-full px-4 py-2 border rounded bg-gray-200 text-gray-600 cursor-not-allowed">
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Mobile</label>
+          <input type="text" value="{{ user.mobile }}" readonly
+            class="w-full px-4 py-2 border rounded bg-gray-200 text-gray-600 cursor-not-allowed">
+        </div>
+
+        {% if request.user.role == 'Admin' %}
+        <div>
+          <label class="block text-sm font-medium mb-1">Dairy Name</label>
+          <input type="text" name="dairy_name" value="{{ user.dairy.name }}"
+            class="w-full px-4 py-2 border rounded bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        {% else %}
+        <div>
+          <label class="block text-sm font-medium mb-1">Dairy Name</label>
+          <input type="text" value="{{ request.user.dairy_profile.dairy.name }}" readonly
+            class="w-full px-4 py-2 border rounded bg-gray-200 text-gray-600 cursor-not-allowed">
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Address -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Address</label>
+        <textarea name="address" rows="2"
+          class="w-full px-4 py-2 border rounded bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400">{{ user.address }}</textarea>
+      </div>
+
+      <!-- Profile Image -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Profile Image</label>
+        {% if user.profile_image %}
+        <img src="{{ user.profile_image.url }}" class="h-20 w-20 rounded-full mb-2">
+        {% endif %}
+        <input type="file" name="profile_image"
+          class="w-full px-4 py-2 border rounded bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-center">
+        <button type="submit"
+          class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Update
+          Profile</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}
