@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-1@6#jykzwx_-5*)fulzke)_30m_7*0z#n1)h-huw12o=yts%^a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 import os
@@ -79,7 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dairy.wsgi.application'
 
-
+import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -90,7 +90,9 @@ DATABASES = {
     }
 }
 
+DATABASES['default']= dj_database_url.parse("postgresql://dairy_project_user:8IZXfQgHoP3tvsALpKWQgrisAOn6YDTl@dpg-d37r910gjchc73cgqca0-a.oregon-postgres.render.com/dairy_project")
 
+# postgresql://dairy_project_user:8IZXfQgHoP3tvsALpKWQgrisAOn6YDTl@dpg-d37r910gjchc73cgqca0-a.oregon-postgres.render.com/dairy_project
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
